@@ -3,6 +3,7 @@ makedepf90 (2.8.8-3) UNRELEASED; urgency=medium
   * Set Standards-Version: 4.1.3. no changes required
   * Set homepage to github as Erik's old page is gone
   * Add Vcs-Git to point to salsa.debian.org
+  * Debhelper level now 11
 
  -- Alastair McKinstry <mckinstry@debian.org>  Mon, 22 Jan 2018 09:46:54 +0000
 
