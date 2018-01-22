@@ -1,5 +1,8 @@
-makedepf90 (2.8.8-3) UNRELEASED; urgency=medium
+makedepf90 (2.8.9-1) UNRELEASED; urgency=medium
 
+  * New upstream version:
+    * Patch to fix overflow. Closes: #802774
+    * Patch to add -B option (thanks to Jason Graham)
   * Set Standards-Version: 4.1.3. no changes required
   * Set homepage to github as Erik's old page is gone
   * Add Vcs-Git to point to salsa.debian.org
