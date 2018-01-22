@@ -1,4 +1,4 @@
-makedepf90 (2.8.9-1) UNRELEASED; urgency=medium
+makedepf90 (2.8.9-1) unstable; urgency=medium
 
   * New upstream version:
     * Patch to fix overflow. Closes: #802774
