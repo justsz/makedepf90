@@ -1,3 +1,10 @@
+makedepf90 (2.8.9-2) UNRELEASED; urgency=medium
+
+  * Standards-Version: 4.2.1
+  * Add VCS-Browser: field to d/control
+
+ -- Alastair McKinstry <mckinstry@debian.org>  Sun, 16 Dec 2018 13:57:47 +0000
+
 makedepf90 (2.8.9-1) unstable; urgency=medium
 
   * New upstream version:
