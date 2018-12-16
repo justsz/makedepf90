@@ -1,0 +1,41 @@
+Fortran 2008 adds a new feature, submodules.
+
+These have the syntax:
+
+```
+module points
+  type :: point
+     real :: x, y
+  end type point
+
+  interface
+     module function point_dist(a, b) result(distance)
+       type(point), intent(in) :: a, b
+       real :: distance
+     end function point_dist
+  end interface
+end module points
+
+submodule (points) points_a
+contains
+  module function point_dist(a, b) result(distance)
+    type(point), intent(in) :: a, b
+    real :: distance
+    distance = sqrt((a%x - b%x)**2 + (a%y - b%y)**2)
+  end function point_dist
+end submodule points_a
+```
+
+where the submodule inherits from the module `points`.
+
+When compiled with gfortran this results in files:
+```
+points.smod
+points@points_a.smod
+```
+
+while when compiled with Flang / F18 or PGI Fortran, this results in:
+``
+points.mod
+points-points_a.mod
+```
