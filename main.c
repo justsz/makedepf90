@@ -65,6 +65,13 @@ static const char helpstring[] =
           "\t  '%m' for 'modulename' (in lowercase)\n"
           "\t  '%M' for 'MODULENAME' (in uppercase).\n"
           "\tDefault: \"%f.o\".\n"
+    "\n-s fmt\tWrite submodule mod-file names using the format 'fmt'.\n"
+          "\t'fmt' may contain any of the following modifiers:\n"
+          "\t  '%%' for '%'\n"
+          "\t  '%f' for name of the source file (without suffix),\n"
+          "\t  '%m' for 'submodulename' (in lowercase)\n"
+          "\t  '%M' for 'SUBMODULENAME' (in uppercase).\n"
+          "\tDefault: \"%f.o\".\n"
     "\n-u module\n\tIgnore modules named 'module'.\n"
     "\n-d file\tMake all targets dependent on 'file'.\n"
     "\n-r rule\tAdd 'rule' (indented by a tab) to all dependency lines,\n"
@@ -143,6 +150,7 @@ int main (int argc, char **argv)
     /* Set a few option defaults */
     options.warn_missing = false;
     options.modfile_fmt = (char *)MODFILE_FMT_DEFAULT;
+    options.submodfle_fmt = (char)*SUBMODFILE_FMT_DEFAULT;
     options.src_fmt = SUFFIX;
     options.create_obj = false;
     options.exe_name = NULL;
@@ -180,6 +188,13 @@ int main (int argc, char **argv)
                 options.modfile_fmt = xstrdup(argv[++i]);
             } else
                 options.modfile_fmt = xstrdup(&(argv[i][2]));
+
+      } else if (strncmp(argv[i], "-s", 2) == 0) {
+            if (strlen(argv[i]) == 2) {
+                if (i == argc-1)  fatal_error("Option '-s' needs argument");
+                options.submodfile_fmt = xstrdup(argv[++i]);
+            } else
+                options.submodfile_fmt = xstrdup(&(argv[i][2]));
 
         } else if (strncmp (argv[i], "-u", 2) == 0) {
             if (strlen(argv[i]) == 2) {

@@ -46,6 +46,7 @@
 
 #define MODFILE_NAME_LEN 256 
 #define MODFILE_FMT_DEFAULT "%f.o"
+#define SUBMODFILE_DEFAULT "%f.o"
 #define MAX_STRING_LEN 8192    
 #define INCLUDE_RECURSION_LIMIT 15
 #define RULE_LENGTH 1024
@@ -61,6 +62,7 @@ typedef struct {
     bool warn_confused; /* Write warnings when makedefp90 gets confused for
                             some reason. */
     char *modfile_fmt;  /* format of '*.mod-file' names */
+    char *submodfile_fmt;  /* format of '*.smod-file' names */
     List *ignore_mods;   /* Modules to be ignored */
     SourceFmt src_fmt;
     bool create_obj;    /* Create list of *.o-files and linking rule for the 
