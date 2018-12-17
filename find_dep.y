@@ -110,7 +110,7 @@ keyword_stmt: WORD EOSTMT {
                     mod = module_new();
                     mod->sourcefile = xstrdup(sourcefile);
                     mod->modulename = $2;
-                    mod->modfile_name = modfile_name($2, mod->sourcefile);
+                    mod->modfile_name = modfile_name($2, NULL /*TODO*/, mod->sourcefile);
 
                     if (list_find(modules, mod, &modcmp))
                         warning("Several modules named '%s'", $2);
@@ -122,6 +122,18 @@ keyword_stmt: WORD EOSTMT {
                     dep->targets=list_prepend(dep->targets, mod->modfile_name);
                 }
             }
+	} else if (strcasecmp((yyvsp[-3].string), "submodule") == 0) {
+            if (!pp_ignore && !in_interface) {
+                if (!list_find(options.ignore_mods, (yyvsp[-2].string),COMP_FUN(&strcasecmp))) {
+		  SubModule *smod;
+
+		  smod = submodule_new();
+		  smod->sourcefile = xstrdup(sourcefile);
+		  smod->submodulename = $2;
+		  smod->submodfile_name = modfile_name($2, $2 /*TODO*/, mod->sourcefile);
+		    warning("DEBUG: Code to write and figure out module name ");
+		}
+	    }
         } else if (strcasecmp($1, "interface") == 0) {
             in_interface = true;
             free($2);
@@ -425,6 +437,15 @@ Module *module_new()
 
     m = (Module *) xmalloc(sizeof(Module));
     m->modulename = m->modfile_name = m->sourcefile = NULL;
+    return m;
+}
+
+SubModule *submodule_new()
+{
+    SubModule *m;
+
+    m = (SubModule *) xmalloc(sizeof(SubModule));
+    m->modulename = m->submodulename = m->submodfile_name = m->sourcefile = NULL;
     return m;
 }
 

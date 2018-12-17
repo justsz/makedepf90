@@ -18,4 +18,4 @@
  *     Boston, MA  02111-1307  USA
  */
 
-char *modfile_name (const char *modulename, const char *filename);
+char *modfile_name (const char *modulename, const char *submodulename, const char *filename);

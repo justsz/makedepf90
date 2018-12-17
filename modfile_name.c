@@ -21,20 +21,27 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "global.h"
 #include "errormesg.h"
 #include "xmalloc.h"
 
 
-char *modfile_name (const char *modulename, const char *filename)
+char *modfile_name (const char *modulename, 
+		    const char *submodulename, 
+		    const char *filename)
 /* 
- * Create a "modfile" name out of 'modulename' and 'filename' using format given
- * by 'options.modfile_fmt'.
+ * Create a "modfile" or "submodfile" name out of 
+   'modulename', 'submodulename' and 'filename' using format given * by 
+   'options.modfile_fmt' or 'options.submodfile_fmt'.
+   Is submodulefile if *submodulename is not NULL
  */
 {
     char *modfile;
-    const char *fmt = options.modfile_fmt;
+    const char *fmt;
     int mi = 0, j, i;
+
+    fmt = (submodulename) ?  options.submodfile_fmt : options.modfile_fmt;
 
     modfile = (char *)xmalloc (sizeof(char)*MODFILE_NAME_LEN);
 
@@ -56,6 +63,13 @@ char *modfile_name (const char *modulename, const char *filename)
                 case 'M':
                     for (j = 0; modulename[j]; j++)
                         modfile[mi++] = toupper (modulename[j]);
+                    break;
+	        case 's':
+                    for (j = 0; modulename[j]; j++)
+                        modfile[mi++] = tolower (submodulename[j]);
+                case 'S':
+                    for (j = 0; modulename[j]; j++)
+                        modfile[mi++] = toupper (submodulename[j]);
                     break;
                 case '%':
                     modfile[mi++] = '%';

@@ -1300,7 +1300,7 @@ yyreduce:
                     if (!list_find(dep->modules, (yyvsp[-2].string), COMP_FUN(&strcasecmp)))
                         dep->modules = list_prepend(dep->modules, (yyvsp[-2].string));
                 }
-            }
+            }	    
         } else if (strcasecmp((yyvsp[-3].string), "module") == 0) {
             if (!pp_ignore && !in_interface) {
                 if (!list_find(options.ignore_mods, (yyvsp[-2].string),COMP_FUN(&strcasecmp))) {
@@ -1309,7 +1309,7 @@ yyreduce:
                     mod = module_new();
                     mod->sourcefile = xstrdup(sourcefile);
                     mod->modulename = (yyvsp[-2].string);
-                    mod->modfile_name = modfile_name((yyvsp[-2].string), mod->sourcefile);
+                    mod->modfile_name = modfile_name((yyvsp[-2].string), NULL /*TODO*/,  mod->sourcefile);
 
                     if (list_find(modules, mod, &modcmp))
                         warning("Several modules named '%s'", (yyvsp[-2].string));
@@ -1321,6 +1321,16 @@ yyreduce:
                     dep->targets=list_prepend(dep->targets, mod->modfile_name);
                 }
             }
+	} else if (strcasecmp((yyvsp[-3].string), "submodule") == 0) {
+            if (!pp_ignore && !in_interface) {
+                if (!list_find(options.ignore_mods, (yyvsp[-2].string),COMP_FUN(&strcasecmp))) {
+		  SubModule *smod;
+
+		  smod = submodule_new();
+		  warning("DEBUG: Code to write ");
+		}
+	    }
+	}
         } else if (strcasecmp((yyvsp[-3].string), "interface") == 0) {
             in_interface = true;
             free((yyvsp[-2].string));
