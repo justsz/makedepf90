@@ -21,7 +21,6 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include "global.h"
 #include "errormesg.h"
 #include "xmalloc.h"
