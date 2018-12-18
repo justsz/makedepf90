@@ -39,3 +39,6 @@ while when compiled with Flang / F18 or PGI Fortran, this results in:
 points.mod
 points-points_a.mod
 ```
+
+So, makedepf90 presented with a submodule creates a dependency on the file parent.mod, where 'parent' is the name of
+the parent module, as it cannot determine (with only one file) the source filename containing the module.
