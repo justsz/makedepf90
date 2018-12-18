@@ -1,5 +1,7 @@
-makedepf90 (2.8.9-2) UNRELEASED; urgency=medium
+makedepf90 (3.0.0-1) UNRELEASED; urgency=medium
 
+  * New upstream release
+     - Adds support for submodules
   * Standards-Version: 4.2.1
   * Add VCS-Browser: field to d/control
 
