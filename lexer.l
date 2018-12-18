@@ -129,6 +129,10 @@ $[ \t]*endif    { RETURN(F90PPR_ENDIF); }
 
 =|=>             { RETURN(ASSIGNMENT_OP); }
 
+
+
+\([ \t][a-zA-Z_][a-zA-Z_0-9]*[ \t]\) { ;yylval.string = xstrdup(yytext); RETURN(PARENT); }
+
 [a-zA-Z_][a-zA-Z_0-9]* { ;yylval.string = xstrdup(yytext); RETURN(WORD); }
 
 [^ \t\n\r;,!'"a-zA-Z=&]+ { RETURN(GARBAGE); }

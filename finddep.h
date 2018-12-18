@@ -47,6 +47,6 @@ Module *module_new ();
 SubModule *submodule_new();
 Dependency *dependency_new ();
 
-bool find_dep (char *file, Dependency *d, List **mods, const List *predef_macro);
+bool find_dep (char *file, Dependency *d, List **mods, List **smods, const List *predef_macro);
 
 int modstrcmp (const void *s, const void *m);

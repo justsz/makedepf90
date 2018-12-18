@@ -39,6 +39,7 @@ static char *sourcefile;
 static char *curr_file;
 static Dependency *dep;  /* Dependencies of the file */
 static List *modules;    /* Modules defined in the file */
+static List *submodules; /* SubModules defined in the file */
 static List *macrolist;
 static char *filestack[INCLUDE_RECURSION_LIMIT+1];
 static int filestack_i;
@@ -50,6 +51,7 @@ static bool in_interface = false;
 int yyerror(const char *s);
 
 static int modcmp(const void *m1, const void *m2);
+static int submodcmp(const void *m1, const void *m2);
 SourceFmt get_format(const char *filename);
 void handle_include(const char *incfile);
 
@@ -74,7 +76,7 @@ void lex_set_format(SourceFmt fmt);
 %token F90PPR_IFDEF F90PPR_IFNDEF F90PPR_IF F90PPR_ELSE F90PPR_ELIF F90PPR_ENDIF
 %token <string> CPP_TOENDL
 %token <number> UNTERMINATED_STRING
-%token <string> STRING WORD 
+%token <string> STRING WORD PARENT
 
 %%
 
@@ -85,6 +87,7 @@ code: /* empty */
 stmt: keyword_stmt
     | assignment_stmt
     ;
+
 
 assignment_stmt: WORD ASSIGNMENT_OP other EOSTMT    /* Ignore */
 
@@ -110,7 +113,7 @@ keyword_stmt: WORD EOSTMT {
                     mod = module_new();
                     mod->sourcefile = xstrdup(sourcefile);
                     mod->modulename = $2;
-                    mod->modfile_name = modfile_name($2, NULL /*TODO*/, mod->sourcefile);
+                    mod->modfile_name = modfile_name($2, NULL, mod->sourcefile);
 
                     if (list_find(modules, mod, &modcmp))
                         warning("Several modules named '%s'", $2);
@@ -122,18 +125,6 @@ keyword_stmt: WORD EOSTMT {
                     dep->targets=list_prepend(dep->targets, mod->modfile_name);
                 }
             }
-	} else if (strcasecmp((yyvsp[-3].string), "submodule") == 0) {
-            if (!pp_ignore && !in_interface) {
-                if (!list_find(options.ignore_mods, (yyvsp[-2].string),COMP_FUN(&strcasecmp))) {
-		  SubModule *smod;
-
-		  smod = submodule_new();
-		  smod->sourcefile = xstrdup(sourcefile);
-		  smod->submodulename = $2;
-		  smod->submodfile_name = modfile_name($2, $2 /*TODO*/, mod->sourcefile);
-		    warning("DEBUG: Code to write and figure out module name ");
-		}
-	    }
         } else if (strcasecmp($1, "interface") == 0) {
             in_interface = true;
             free($2);
@@ -239,7 +230,45 @@ keyword_stmt: WORD EOSTMT {
         if (skip_i > 0)  skip_i--;
         if (pp_ignore) pp_ignore--;
     }
-    | WORD GARBAGE other EOSTMT             /* Ignore */
+    | WORD PARENT WORD EOSTMT {
+      if ((strcasecmp($1, "submodule") == 0) && !pp_ignore && !in_interface) {
+         printf(" submodule %s \n", $3);
+         printf(" parent module %s \n", $2);
+
+	 if (!list_find(options.ignore_mods, $2,COMP_FUN(&strcasecmp))) {
+	   SubModule *smod;
+	   char *tmp, *p, *p1, *module_name;
+
+	   tmp = xstrdup($2);
+	   /* Trim bits off parent module name */
+	   p = tmp + strlen($2) -1;
+	   for (;  *p == ')' || *p == ' ' || *p == '\t'; p--);
+	   *(p+1) = '\0';
+	   for ( p = tmp; *p == '(' || *p == ' ' || *p == '\t'; p++);
+	   module_name = xstrdup(p);
+	   free(tmp);
+
+	   smod = submodule_new();
+	   smod->sourcefile = xstrdup(sourcefile);
+	   smod->submodulename = xstrdup($3);
+	   smod->modulename = module_name;
+	   smod->submodfile_name = modfile_name(module_name, smod->submodulename, smod->sourcefile);
+
+	   printf(" Adding %s as modfile for submodule", smod->submodfile_name);
+	   
+	   if (list_find(submodules, smod, &submodcmp))
+	     warning("Several submodules named '%s'", $2);
+	   else
+	     modules = list_prepend(submodules, smod);
+	   
+	   if (!list_find(dep->targets, smod->submodfile_name,
+			  COMP_FUN(&strcasecmp)))
+	     dep->targets=list_prepend(dep->targets, smod->submodfile_name);
+	 }
+	 
+      }
+    }
+    | WORD GARBAGE other EOSTMT               /* Ignore */
     | GARBAGE other EOSTMT
     | EOSTMT
     | error { yyerrok; }
@@ -312,7 +341,7 @@ int yyerror(const char *s)
 
 /* Return false for failure reading file, else return true.  */
 
-bool find_dep(char *file, Dependency *d, List **mods, const List *predef_macro)
+bool find_dep(char *file, Dependency *d, List **mods, List **smods, const List *predef_macro)
 {
     extern FILE *yyin;
     extern int yylineno;
@@ -324,6 +353,7 @@ bool find_dep(char *file, Dependency *d, List **mods, const List *predef_macro)
     curr_file = file;
     dep = d;
     modules = *mods;
+    submodules = *smods;
     yylineno = 1;
     filestack_i = 0;
     pp_ignore = 0;
@@ -374,6 +404,14 @@ int modstrcmp(const void *s, const void *m)
 static int modcmp (const void *m1, const void *m2)
 {
     return strcasecmp(((Module *)m1)->modulename, ((Module *)m2)->modulename);
+}
+
+static int submodcmp (const void *m1, const void *m2)
+{
+  int m;
+  
+  m = strcasecmp(((SubModule *)m1)->modulename, ((SubModule *)m2)->modulename);
+  return (m != 0)  ? m : strcasecmp(((SubModule *)m1)->submodulename, ((SubModule *)m2)->submodulename);
 }
 
 

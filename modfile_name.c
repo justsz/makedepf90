@@ -64,11 +64,20 @@ char *modfile_name (const char *modulename,
                         modfile[mi++] = toupper (modulename[j]);
                     break;
 	        case 's':
-                    for (j = 0; modulename[j]; j++)
+		    if (!submodulename) {
+		      warning("Submodule component not defined in this context");
+		    } else  {
+		      for (j = 0; modulename[j]; j++)
                         modfile[mi++] = tolower (submodulename[j]);
+		    }
+		    break;
                 case 'S':
-                    for (j = 0; modulename[j]; j++)
+		    if (!submodulename) {
+		      warning("Submodule component not defined in this context");
+		    } else  {
+		      for (j = 0; modulename[j]; j++)
                         modfile[mi++] = toupper (submodulename[j]);
+		    }
                     break;
                 case '%':
                     modfile[mi++] = '%';

@@ -134,6 +134,7 @@ int main (int argc, char **argv)
     Dependency *dep;
     List *deplist = NULL;   /* Dependencies */
     List *modlist = NULL;   /* Defined modules */
+    List *submodlist = NULL; /* Defined submodules */
     List *extradeps = NULL; /* "Extra" dependencies (given by the '-d' option */
     List *rules = NULL;  /* List of rules to be added to all dependency lines */
     List *fspecrules = NULL; /* FileSpecific rules */
@@ -152,7 +153,7 @@ int main (int argc, char **argv)
     /* Set a few option defaults */
     options.warn_missing = false;
     options.modfile_fmt = (char *)MODFILE_FMT_DEFAULT;
-    options.submodfle_fmt = (char)*SUBMODFILE_FMT_DEFAULT;
+    options.submodfile_fmt = (char*)SUBMODFILE_FMT_DEFAULT;
     options.src_fmt = SUFFIX;
     options.create_obj = false;
     options.exe_name = NULL;
@@ -381,7 +382,7 @@ int main (int argc, char **argv)
 
         dep = dependency_new();
         srcfile = (char *)h1->data;
-        if (find_dep(srcfile, dep, &modlist, macrolist)) {
+        if (find_dep(srcfile, dep, &modlist, &submodlist, macrolist)) {
             dep->sourcefile = srcfile;
 
             tmp = replace_suffix(srcfile, ".o");
