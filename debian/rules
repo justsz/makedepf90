@@ -14,7 +14,7 @@ override_dh_auto_test:
 
 override_dh_auto_clean:
 	dh_auto_clean
-	rm =f find_dep.c lexer.c
+	rm -f find_dep.c lexer.c
 
 override_dh_auto_install:
 	$(MAKE) install prefix=$(DESTDIR)/usr
