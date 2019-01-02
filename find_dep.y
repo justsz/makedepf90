@@ -98,8 +98,8 @@ keyword_stmt: WORD EOSTMT {
     }
     | WORD WORD other EOSTMT { 
         if (strcasecmp($1, "use") == 0) {
+                printf("Use '%s'\n", $2);
             if (!pp_ignore) {
-                DEBUG_PRINT("Use '%s'\n", $2);
                 if (!list_find(options.ignore_mods, $2,COMP_FUN(&strcasecmp))) {
                     if (!list_find(dep->modules, $2, COMP_FUN(&strcasecmp)))
                         dep->modules = list_prepend(dep->modules, $2);
@@ -120,6 +120,7 @@ keyword_stmt: WORD EOSTMT {
                     else
                         modules = list_prepend(modules, mod);
 
+                    printf("module file %s dependency %s\n", $2, mod->modfile_name);
                     if (!list_find(dep->targets, mod->modfile_name,
                                    COMP_FUN(&strcasecmp)))
                     dep->targets=list_prepend(dep->targets, mod->modfile_name);
@@ -150,7 +151,7 @@ keyword_stmt: WORD EOSTMT {
     | CPP_INCLUDE GARBAGE other EOSTMT  /* Ignore #include <whatever.h> */
     | define WORD other EOSTMT{ 
         if (!pp_ignore) {
-            DEBUG_PRINT("%s defined\n", $2);
+            printf("%s defined\n", $2);
             defmac = macro_new();
             macro_setname(defmac, $2);
             if (!list_find(macrolist, defmac, &macrocmp))
@@ -232,9 +233,8 @@ keyword_stmt: WORD EOSTMT {
     }
     | WORD PARENT WORD EOSTMT {
       if ((strcasecmp($1, "submodule") == 0) && !pp_ignore && !in_interface) {
-         printf(" submodule %s \n", $3);
-         printf(" parent module %s \n", $2);
 
+	printf(" DEBUG: found submodule\n"); 
 	 if (!list_find(options.ignore_mods, $2,COMP_FUN(&strcasecmp))) {
 	   SubModule *smod;
 	   char *tmp, *p, *p1, *module_name;
@@ -254,21 +254,21 @@ keyword_stmt: WORD EOSTMT {
 	   smod->modulename = module_name;
 	   smod->submodfile_name = modfile_name(module_name, smod->submodulename, smod->sourcefile);
 
-	   printf(" Adding %s as modfile for submodule", smod->submodfile_name);
+	   printf(" Adding %s as dependency for submodule %s \n", smod->submodfile_name, smod->modulename);
 	   
 	   if (list_find(submodules, smod, &submodcmp))
 	     warning("Several submodules named '%s'", $2);
 	   else
 	     modules = list_prepend(submodules, smod);
 	   
-	   if (!list_find(dep->targets, smod->submodfile_name,
+	   if (!list_find(dep->modules, smod->submodfile_name,
 			  COMP_FUN(&strcasecmp)))
-	     dep->targets=list_prepend(dep->targets, smod->submodfile_name);
+	     dep->modules=list_prepend(dep->modules, smod->submodfile_name);
 	 }
 	 
       }
     }
-    | WORD GARBAGE other EOSTMT               /* Ignore */
+| WORD GARBAGE other EOSTMT { printf("DEBUG: ignoring garbage %s\n", $1); }              /* Ignore */
     | GARBAGE other EOSTMT
     | EOSTMT
     | error { yyerrok; }
@@ -459,7 +459,7 @@ void handle_include(const char *incfile)
         filestack[filestack_i++] = curr_file;
         curr_file = remove_citation(incfile);
         if (lex_include_file(curr_file))  {
-            DEBUG_PRINT("including file '%s'\n", curr_file);
+            printf("including file '%s'\n", curr_file);
             if (!list_find(dep->includes, curr_file, COMP_FUN(&strcasecmp)))
                 dep->includes = list_prepend(dep->includes, curr_file);
         } else {
