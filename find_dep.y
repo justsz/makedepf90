@@ -268,6 +268,7 @@ keyword_stmt: WORD EOSTMT {
 	 
       }
     }
+| other PARENT other EOSTMT { free($1) };
 | WORD GARBAGE other EOSTMT { printf("DEBUG: ignoring garbage %s\n", $1); }              /* Ignore */
     | GARBAGE other EOSTMT
     | EOSTMT
