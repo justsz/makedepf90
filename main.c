@@ -134,7 +134,6 @@ int main (int argc, char **argv)
     Dependency *dep;
     List *deplist = NULL;   /* Dependencies */
     List *modlist = NULL;   /* Defined modules */
-    List *submodlist = NULL; /* Defined submodules */
     List *extradeps = NULL; /* "Extra" dependencies (given by the '-d' option */
     List *rules = NULL;  /* List of rules to be added to all dependency lines */
     List *fspecrules = NULL; /* FileSpecific rules */
@@ -382,7 +381,7 @@ int main (int argc, char **argv)
 
         dep = dependency_new();
         srcfile = (char *)h1->data;
-        if (find_dep(srcfile, dep, &modlist, &submodlist, macrolist)) {
+        if (find_dep(srcfile, dep, &modlist,  macrolist)) {
             dep->sourcefile = srcfile;
 
             tmp = replace_suffix(srcfile, ".o");

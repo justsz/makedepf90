@@ -174,7 +174,7 @@ bool lex_include_file(const char *incfile)
 {
     FILE *bakup;
 
-    DEBUG_PRINT("'%s'\n", incfile);
+    /* DEBUG_PRINT("'%s'\n", incfile);  */
 
     if (incl_buff >= INCLUDE_RECURSION_LIMIT) {
         warning("Recursion limit reached in file '%s'", incfile);
