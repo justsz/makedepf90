@@ -1,11 +1,11 @@
-makedepf90 (3.0.0-1) UNRELEASED; urgency=medium
+makedepf90 (3.0.0-1) unstable; urgency=medium
 
   * New upstream release
      - Adds support for submodules
-  * Standards-Version: 4.2.1
+  * Standards-Version: 4.3.0
   * Add VCS-Browser: field to d/control
 
- -- Alastair McKinstry <mckinstry@debian.org>  Sun, 16 Dec 2018 13:57:47 +0000
+ -- Alastair McKinstry <mckinstry@debian.org>  Tue, 15 Jan 2019 08:58:15 +0000
 
 makedepf90 (2.8.9-1) unstable; urgency=medium
 

@@ -3,7 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: Alastair McKinstry <mckinstry@debian.org>
 Build-Depends: debhelper (>= 11)
-Standards-Version: 4.2.1
+Standards-Version: 4.3.0
 Homepage: https://github.com/amckinstry/makedepf90
 Vcs-Browser: https://salsa.debian.org:/science-team/makedepf90.git
 Vcs-Git: https://salsa.debian.org:/science-team/makedepf90.git
