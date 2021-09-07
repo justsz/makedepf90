@@ -7,3 +7,7 @@ Copyright: 2006  Erik Edelmann
 License: GPL-2
  A copy  of the license can be found at /usr/share/common-licenses/GPL-2
 
+Files: debian/*
+Copyright: 2019-2021 Alastair McKinstry <mckinstry@debian.org>
+License: GPL-2
+ A copy  of the license can be found at /usr/share/common-licenses/GPL-2

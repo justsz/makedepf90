@@ -2,6 +2,7 @@ makedepf90 (3.0.0-2) UNRELEASED; urgency=medium
 
   * Standards-Version: 4.6.0
   * Debhelper level 13
+  * Label copyright for debian/* files
 
  -- Alastair McKinstry <mckinstry@debian.org>  Tue, 07 Sep 2021 09:46:17 +0100
 
