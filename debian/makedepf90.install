@@ -1,1 +1,2 @@
-makedepf90 	/usr/bin
+/usr/bin/makedepf90
+usr/share/man/man1/makedepf90.1
