@@ -63,6 +63,7 @@ typedef struct {
                             some reason. */
     char *modfile_fmt;  /* format of '*.mod-file' names */
     char *submodfile_fmt;  /* format of '*.smod-file' names */
+    char *submodfile_path;  /* Path to output 'submodule : module' filename relationships. */
     List *ignore_mods;   /* Modules to be ignored */
     SourceFmt src_fmt;
     bool create_obj;    /* Create list of *.o-files and linking rule for the 

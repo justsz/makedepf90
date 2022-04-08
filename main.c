@@ -74,6 +74,7 @@ static const char helpstring[] =
           "\t  '%s' for 'submodulename' (in lowercase)\n"
           "\t  '%S' for 'SUBMODULENAME' (in uppercase).\n"
           "\tDefault: \"%m-%s.smod\".\n"
+    "\n-S PATH\n\tOutput 'submodule : module' filename relationships to file in PATH.\n"
     "\n-u module\n\tIgnore modules named 'module'.\n"
     "\n-d file\tMake all targets dependent on 'file'.\n"
     "\n-r rule\tAdd 'rule' (indented by a tab) to all dependency lines,\n"
@@ -197,6 +198,16 @@ int main (int argc, char **argv)
                 options.submodfile_fmt = xstrdup(argv[++i]);
             } else
                 options.submodfile_fmt = xstrdup(&(argv[i][2]));
+      
+      } else if (strncmp(argv[i], "-S", 2) == 0) {
+            if (strlen(argv[i]) == 2) {
+                if (i == argc-1)  fatal_error("Option '-S' needs argument");
+                options.submodfile_path = xstrdup(argv[++i]);
+            } else
+                if (argv[i][2] == '=') {
+                    options.submodfile_path = xstrdup(&(argv[i][3]));
+                } else
+                    options.submodfile_path = xstrdup(&(argv[i][2]));
 
         } else if (strncmp (argv[i], "-u", 2) == 0) {
             if (strlen(argv[i]) == 2) {
@@ -506,6 +517,38 @@ int main (int argc, char **argv)
         }
 
     }
+    
+    /* Print out submodule and parent module relationships */
+    if (options.submodfile_path != NULL) {
+        FILE *f = fopen(options.submodfile_path, "w");
+        if (f == NULL) fatal_error("Failed to open output file: %s", options.submodfile_path); 
+
+        for (h1 = modlist; h1; h1 = h1->next) {
+            Module *m = (Module *)h1->data;
+
+            /* If there is no parent, there is no need to print this module */
+            if (m->parentname == NULL)
+                continue;
+
+            List *l;
+            if (!(l = list_find(modlist, m->parentname, &modstrcmp))) {
+                /* Don't write *.mod-file if the parent's definition isn't found. */ 
+                if (options.warn_missing)  warning("Parent Module '%s' not found", m->parentname);
+            } else {
+                mod = (Module *)l->data;
+                if (options.obj_dir_set)
+                    fprintf(f, "%s : %s ", 
+                        set_path(m->modfile_name, options.obj_dir, options.obj_dir_mirror),
+                        set_path(mod->modfile_name, options.obj_dir, options.obj_dir_mirror));
+                else {
+                    fprintf(f, "%s : %s ", m->modfile_name, mod->modfile_name);
+                }
+            }
+            fprintf(f, "\n");
+        }
+        fclose(f);
+    }
+
 
     exit(EXIT_SUCCESS);
 }
